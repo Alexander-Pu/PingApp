@@ -63,6 +63,7 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
 
     // UI references.
     private AutoCompleteTextView mUserView;
+    private TextInputEditText mNameView;
     private TextInputEditText mPasswordView;
     private TextInputEditText cPasswordView;
     private View mProgressView;
@@ -75,6 +76,8 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
         // Set up the login form.
         mUserView = (AutoCompleteTextView) findViewById(R.id.user);
         populateAutoComplete();
+
+        mNameView = (TextInputEditText) findViewById(R.id.name);
 
         mPasswordView = (TextInputEditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {

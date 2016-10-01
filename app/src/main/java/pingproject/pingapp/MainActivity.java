@@ -1,6 +1,8 @@
 package pingproject.pingapp;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -9,16 +11,33 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private ArrayList<String> data = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ListView lv = (ListView) findViewById(R.id.list_view);
+        generateListContent();
+        lv.setAdapter(new MyListAdapter(this,R.layout.friend_item,data));
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -39,6 +58,12 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    public void generateListContent() {
+        for(int i=0;i<5;i++){
+            data.add("This is row number" + i);
+        }
     }
 
     @Override
@@ -74,5 +99,45 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private class MyListAdapter extends ArrayAdapter<String> {
+        private int layout;
+        public MyListAdapter(Context context, int resource, List<String> objects) {
+            super(context, resource, objects);
+            layout = resource;
+        }
+
+        @NonNull
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            ViewHolder mainViewHolder = null;
+            if(convertView == null) {
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                convertView = inflater.inflate(layout, parent, false);
+                ViewHolder viewHolder = new ViewHolder();
+                viewHolder.button = (FloatingActionButton) convertView.findViewById(R.id.friend_item_button);
+                viewHolder.name = (TextView) convertView.findViewById(R.id.friend_item_text);
+                viewHolder.button.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getContext(),"Button was clicked for list item "+position,Toast.LENGTH_SHORT).show();
+                    }
+                });
+                convertView.setTag(viewHolder);
+
+            }
+            else {
+                mainViewHolder = (ViewHolder) convertView.getTag();
+                mainViewHolder.name.setText(getItem(position));
+            }
+
+            return convertView;
+        }
+    }
+
+    public class ViewHolder {
+        FloatingActionButton button;
+        TextView name;
     }
 }
