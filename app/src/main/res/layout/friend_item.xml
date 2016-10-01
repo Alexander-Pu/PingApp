@@ -6,8 +6,9 @@
 
     <android.support.design.widget.FloatingActionButton
         style="@style/floating_action_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:scaleType="center"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:id="@+id/friend_item_button"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
@@ -17,7 +18,8 @@
 
     <TextView
         android:text="    Friend Name"
-        android:textSize="30sp"
+        android:textSize="25sp"
+        android:gravity="left|center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/friend_item_button"

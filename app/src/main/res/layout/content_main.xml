@@ -23,9 +23,8 @@
         android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_margin="20dp"
+        android:background="@drawable/customborder"/>
 
 
 </RelativeLayout>
