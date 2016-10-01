@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SIGN UP"
-        android:textSize="50dp"/>
+        android:textSize="50sp"/>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/sign_up_form"
@@ -35,7 +35,7 @@
         app:passwordToggleEnabled="false">
 
         <AutoCompleteTextView
-            android:id="@+id/email"
+            android:id="@+id/user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_user"
