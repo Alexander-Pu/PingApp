@@ -8,6 +8,8 @@ public class Location {
     private Double Latitude;
     private Double Longitude;
 
+    public Location(){}
+
     public Location(Double lat, Double longitude) {
         Latitude = lat;
         Longitude = longitude;
