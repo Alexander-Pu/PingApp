@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +21,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.support.design.widget.TextInputEditText;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 
 /**
@@ -37,7 +42,7 @@ public class SignUpActivity extends AppCompatActivity{
      * TODO: remove after connecting to a real authentication system.
      */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
+            "test_user", "test_password"
     };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -49,8 +54,6 @@ public class SignUpActivity extends AppCompatActivity{
     private TextInputEditText mNameView;
     private TextInputEditText mPasswordView;
     private TextInputEditText cPasswordView;
-    private View mProgressView;
-    private View mLoginFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,26 +61,15 @@ public class SignUpActivity extends AppCompatActivity{
         setContentView(R.layout.activity_signup);
         // Set up the login form.
         mUserView = (TextInputEditText) findViewById(R.id.user);
-
         mNameView = (TextInputEditText) findViewById(R.id.name);
-
         mPasswordView = (TextInputEditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    return true;
-                }
-                return false;
-            }
-        });
 
         cPasswordView = (TextInputEditText) findViewById(R.id.confirm_password);
         cPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
+                if (id == R.id.confirm_password || id == EditorInfo.IME_NULL) {
+                    attemptSignUp();
                     return true;
                 }
                 return false;
@@ -88,12 +80,9 @@ public class SignUpActivity extends AppCompatActivity{
         mUserSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                attemptSignUp();
             }
         });
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
     }
 
     /**
@@ -101,7 +90,7 @@ public class SignUpActivity extends AppCompatActivity{
      * If there are form errors (invalid user, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
+    private void attemptSignUp() {
         if (mAuthTask != null) {
             return;
         }
@@ -124,6 +113,12 @@ public class SignUpActivity extends AppCompatActivity{
             cancel = true;
         }
 
+        if(!passwordsMatch()){
+            cPasswordView.setError("The passwords must match");
+            focusView = cPasswordView;
+            cancel = true;
+        }
+
         // Check for a valid user address.
         if (TextUtils.isEmpty(user)) {
             mUserView.setError(getString(R.string.error_field_required));
@@ -142,6 +137,9 @@ public class SignUpActivity extends AppCompatActivity{
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
+            Context context = getApplicationContext();
+            File path = context.getFilesDir();
+            writeToFile(user +","+ password,context);
             Intent MyIntent = new Intent(this,MainActivity.class);
             startActivity(MyIntent);
             mAuthTask = new UserLoginTask(user, password);
@@ -149,14 +147,29 @@ public class SignUpActivity extends AppCompatActivity{
         }
     }
 
+    private void writeToFile(String data,Context context) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
     private boolean isUserValid(String user) {
         //TODO: Replace this with your own logic
-        return user.contains("@");
+        return user.matches("^[a-zA-Z0-9]*$");
     }
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return (password.length() > 4);
+    }
+
+    private boolean passwordsMatch() {
+        return mPasswordView.getText().toString().equals(cPasswordView.getText().toString());
     }
 
     private interface ProfileQuery {

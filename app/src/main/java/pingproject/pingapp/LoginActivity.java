@@ -146,7 +146,7 @@ public class LoginActivity extends AppCompatActivity{
 
     private boolean isUserValid(String user) {
         //TODO: Replace this with your own logic
-        return user.contains("@");
+        return user.matches("^[a-zA-Z0-9]*$");
     }
 
     private boolean isPasswordValid(String password) {
