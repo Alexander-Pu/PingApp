@@ -22,11 +22,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.support.design.widget.TextInputEditText;
 
-import pingproject.pingapp.UserController;
+
+import com.google.android.gms.common.UserRecoverableException;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+
+import static pingproject.pingapp.UserController.*;
 
 
 /**
@@ -86,6 +89,8 @@ public class SignUpActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 attemptSignUp();
+
+
             }
         });
     }
@@ -206,19 +211,15 @@ public class SignUpActivity extends AppCompatActivity{
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-
-            if (UserController.createNewUser(mUser, mPassword, mName) == false) {
+            UserController userControl = new UserController();
+            return  (userControl.createNewUser(mUser, mPassword, mName));
                 // Account exists, return true if the password matches.
-                return false;
-            }
-
-            // TODO: register the new account here.
-            return true;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
+            Log.e("Running:","onPostExecute");
 
             if (success) {
                 finish();
@@ -232,6 +233,7 @@ public class SignUpActivity extends AppCompatActivity{
 
         @Override
         protected void onCancelled() {
+            Log.e("Running:","onCancelled");
             mAuthTask = null;
         }
     }

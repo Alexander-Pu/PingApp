@@ -33,9 +33,8 @@ public class User {
         Username = name;
     }
 
-    public boolean setPassword (String password) {
+    public void setPassword (String password) {
         Password = password;
-        return true;
     }
 
     public boolean setUserId (String userId) {

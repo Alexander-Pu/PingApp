@@ -1,5 +1,6 @@
 package pingproject.pingapp;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -40,44 +41,38 @@ public class UserController extends android.app.Application{
         userRef.addValueEventListener((new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildren() != null) {
+                    for (DataSnapshot snapChild : dataSnapshot.getChildren()) {
 
-                for(DataSnapshot snapChild: dataSnapshot.getChildren()) {
-
-                    //snapChild is at "Id"
-                    if (snapChild.child("Username").getValue() == username) {
-                        exist[0] = true;
+                        //snapChild is at "Id"
+                        if (snapChild.child("Username").getValue() == username) {
+                            exist[0] = true;
+                        }
                     }
+                    Log.e("LoopCheck", "ExitsLoop");
                 }
-                if (exist[0] == false) {
-                    /*
-                    Map<Object, Object> newUserObj = new HashMap<Object, Object>();
-                    newUserObj.put("Username", username);
-                    newUserObj.put("Password", password);
-                    newUserObj.put("Fullname", fullname);
-                    newUserObj.put("Location", new Location());
-                    newUserObj.put("Friends", new ArrayList<User>());
-                    newUserObj.put("GroupList", new ArrayList<Group>());
-                    newUserObj.put("PingHistory", new ArrayList<History>());
-                    newUserObj.put("FriendsList", new ArrayList<User>());
-                    newUserObj.put("PendingFriends", new ArrayList<User>());*/
-                    User newUserObj = new User();
-                    newUserObj.setUsername(username);
-                    newUserObj.setPassword(password);
-                    newUserObj.setFullname(fullname);
-
-                    Map<Object, Object> newUserMap = new HashMap<Object, Object>();
-                    newUserMap.put("UserObj", newUserObj);
-                    newUserMap.put("Username", username);
-
-                    userRef.push().setValue(newUserObj);
-                }
+                int count = 0;
             }
-
             @Override
             public void onCancelled(FirebaseError firebaseError) {
             }
 
         }));
+
+        if (exist[0] == false) {
+
+            User newUserObj = new User();
+            Log.e("Passwordcheck", password);
+
+            newUserObj.setUsername(username);
+            newUserObj.setPassword(password);
+            newUserObj.setFullname(fullname);
+
+            Map<Object, Object> newUserMap = new HashMap<Object, Object>();
+            newUserMap.put("UserObj", newUserObj);
+            newUserMap.put("Username", username);
+            userRef.push().setValue(newUserMap);
+        }
 
         return !(exist[0]);
     }
