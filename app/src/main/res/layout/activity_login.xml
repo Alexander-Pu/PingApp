@@ -79,5 +79,14 @@
             android:text="@string/action_sign_up_short"
             android:textStyle="bold" />
 
+        <Button
+            android:id="@+id/maps_button"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Map"
+            android:textStyle="bold" />
+
     </LinearLayout>
 </LinearLayout>

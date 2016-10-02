@@ -124,11 +124,24 @@ public class LoginActivity extends AppCompatActivity{
                 switchToSignUp();
             }
         });
+
+        Button mapsButton = (Button) findViewById(R.id.maps_button);
+        mapsButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchToMaps();
+            }
+        });
     }
 
     private void switchToSignUp() {
         Intent toSignUp = new Intent(this,SignUpActivity.class);
         startActivity(toSignUp);
+    }
+
+    private void switchToMaps() {
+        Intent toMaps = new Intent(this,MapsActivity.class);
+        startActivity(toMaps);
     }
 
     /**

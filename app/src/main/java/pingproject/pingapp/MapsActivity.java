@@ -1,3 +1,5 @@
+/* From http://www.androidtutorialpoint.com/intermediate/android-map-app-showing-current-location-android/ */
+
 package pingproject.pingapp;
 
 import android.Manifest;
@@ -206,4 +208,3 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 }
-
