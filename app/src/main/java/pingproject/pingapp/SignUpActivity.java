@@ -141,9 +141,7 @@ public class SignUpActivity extends AppCompatActivity{
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             File path = context.getFilesDir();
-            writeToFile(user +","+ password,context);
-            Intent MyIntent = new Intent(this,MainActivity.class);
-            startActivity(MyIntent);
+            writeToFile(user +":"+ password,context);
             mAuthTask = new UserLoginTask(user, password);
             mAuthTask.execute((Void) null);
         }
@@ -151,9 +149,9 @@ public class SignUpActivity extends AppCompatActivity{
 
     private void writeToFile(String data,Context context) {
         try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
-            outputStreamWriter.write(data);
             String dir = getFilesDir().getAbsolutePath();
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(dir+"/config.txt", Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
             Log.e("Print",dir);
             outputStreamWriter.close();
         }
@@ -229,6 +227,8 @@ public class SignUpActivity extends AppCompatActivity{
 
             if (success) {
                 finish();
+                Intent MyIntent = new Intent(context,MainActivity.class);
+                startActivity(MyIntent);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

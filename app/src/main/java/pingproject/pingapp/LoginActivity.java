@@ -17,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewDebug;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -35,17 +36,8 @@ public class LoginActivity extends AppCompatActivity{
 
     private Context context;
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 0;
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
+            "test1:hello", "test2:world"
     };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -57,8 +49,10 @@ public class LoginActivity extends AppCompatActivity{
     private TextInputEditText mPasswordView;
 
     private String getStringFromFile(String filename) {
-        String returnString = "invalid@,invalid_pass";
+        String returnString = "test1:hello";
+        Log.d("Default string",returnString);
         try{
+            Log.d("Trying","To work");
             FileInputStream fis;
             fis = openFileInput(filename);
             StringBuffer fileContent = new StringBuffer("");
@@ -68,12 +62,14 @@ public class LoginActivity extends AppCompatActivity{
 
             while ((n = fis.read(buffer)) != -1)
             {
+                Log.e("PRINTING LETTER", String.valueOf(n));
                 fileContent.append(new String(buffer, 0, n));
             }
         }
         catch (Exception e){
             Log.e("Exception","Failed to read file");
         }
+        Log.d("return string",returnString);
         return returnString;
     }
 
@@ -81,18 +77,26 @@ public class LoginActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this.getApplicationContext();
-        String configPath = context.getFilesDir() + "/config.txt";
-        File file = new File(configPath);
+        String configPath = "config.txt";
+        Log.v("configPath",configPath);
+        for (String temp: fileList()){
+            Log.v("File",temp);
+        }
+        File file = new File(context.getFilesDir()+"/"+configPath);
+        Log.v("file dir",file.getParent()+"config.txt");
         if (file.exists()){
+            Log.v("Attempting","Preload login");
             String logInString = getStringFromFile(configPath);
-            String[] separated = logInString.split(",");
-            String username = separated[0];
-            String password = separated[1];
+            String[] stringSplit = logInString.split(":");
+            String user = stringSplit[0];
+            String pass = stringSplit[1];
+            mAuthTask = new UserLoginTask(user, pass,true);
+            mAuthTask.execute((Void) null);
         }
         setContentView(R.layout.activity_login);
+
         // Set up the login form.
         mUserView = (TextInputEditText) findViewById(R.id.user);
-
         mPasswordView = (TextInputEditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -173,9 +177,7 @@ public class LoginActivity extends AppCompatActivity{
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            Intent MyIntent = new Intent(this,MainActivity.class);
-            startActivity(MyIntent);
-            mAuthTask = new UserLoginTask(user, password);
+            mAuthTask = new UserLoginTask(user, password,false);
             mAuthTask.execute((Void) null);
         }
     }
@@ -206,10 +208,13 @@ public class LoginActivity extends AppCompatActivity{
 
         private final String mUser;
         private final String mPassword;
+        private boolean autoAttempt;
 
-        UserLoginTask(String user, String password) {
+        UserLoginTask(String user, String password, boolean auto) {
             mUser = user;
             mPassword = password;
+            autoAttempt = auto;
+            Log.v("Created","UserLogTask");
         }
 
         @Override
@@ -223,16 +228,7 @@ public class LoginActivity extends AppCompatActivity{
                 return false;
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mUser)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
+            return existingCredential(mUser,mPassword);
         }
 
         @Override
@@ -240,7 +236,13 @@ public class LoginActivity extends AppCompatActivity{
             mAuthTask = null;
             if (success) {
                 finish();
-            } else {
+                Intent MyIntent = new Intent(context,MainActivity.class);
+                startActivity(MyIntent);
+            }
+            else if(autoAttempt==true){
+                return;
+            }
+            else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }
@@ -250,6 +252,19 @@ public class LoginActivity extends AppCompatActivity{
         protected void onCancelled() {
             mAuthTask = null;
         }
+    }
+
+    private boolean existingCredential(String user, String pass) {
+        String mUser = user;
+        String mPassword = pass;
+        for( String credential:DUMMY_CREDENTIALS) {
+            String[] pieces = credential.split(":");
+            if (pieces[0].equals(mUser)) {
+                // Account exists, return true if the password matches.
+                return pieces[1].equals(mPassword);
+            }
+        }
+        return false;
     }
 
     @Override
