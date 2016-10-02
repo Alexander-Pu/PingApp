@@ -54,10 +54,13 @@ public class SignUpActivity extends AppCompatActivity{
     private TextInputEditText mNameView;
     private TextInputEditText mPasswordView;
     private TextInputEditText cPasswordView;
+    private Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this.getApplicationContext();
         setContentView(R.layout.activity_signup);
         // Set up the login form.
         mUserView = (TextInputEditText) findViewById(R.id.user);
@@ -137,7 +140,6 @@ public class SignUpActivity extends AppCompatActivity{
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            Context context = getApplicationContext();
             File path = context.getFilesDir();
             writeToFile(user +","+ password,context);
             Intent MyIntent = new Intent(this,MainActivity.class);
@@ -151,6 +153,8 @@ public class SignUpActivity extends AppCompatActivity{
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
+            String dir = getFilesDir().getAbsolutePath();
+            Log.e("Print",dir);
             outputStreamWriter.close();
         }
         catch (IOException e) {

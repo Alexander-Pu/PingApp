@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,11 +24,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.support.design.widget.TextInputEditText;
 
+import java.io.File;
+import java.io.FileInputStream;
+
 
 /**
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity{
+
+    private Context context;
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -50,9 +56,39 @@ public class LoginActivity extends AppCompatActivity{
     private TextInputEditText mUserView;
     private TextInputEditText mPasswordView;
 
+    private String getStringFromFile(String filename) {
+        String returnString = "invalid@,invalid_pass";
+        try{
+            FileInputStream fis;
+            fis = openFileInput(filename);
+            StringBuffer fileContent = new StringBuffer("");
+
+            byte[] buffer = new byte[1024];
+            int n;
+
+            while ((n = fis.read(buffer)) != -1)
+            {
+                fileContent.append(new String(buffer, 0, n));
+            }
+        }
+        catch (Exception e){
+            Log.e("Exception","Failed to read file");
+        }
+        return returnString;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this.getApplicationContext();
+        String configPath = context.getFilesDir() + "/config.txt";
+        File file = new File(configPath);
+        if (file.exists()){
+            String logInString = getStringFromFile(configPath);
+            String[] separated = logInString.split(",");
+            String username = separated[0];
+            String password = separated[1];
+        }
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mUserView = (TextInputEditText) findViewById(R.id.user);
@@ -145,12 +181,10 @@ public class LoginActivity extends AppCompatActivity{
     }
 
     private boolean isUserValid(String user) {
-        //TODO: Replace this with your own logic
         return user.matches("^[a-zA-Z0-9]*$");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
     }
 
