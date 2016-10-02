@@ -226,8 +226,8 @@ public class SignUpActivity extends AppCompatActivity{
                 Intent MyIntent = new Intent(context,MainActivity.class);
                 startActivity(MyIntent);
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                mUserView.setError("This username is already taken");
+                mUserView.requestFocus();
             }
         }
 

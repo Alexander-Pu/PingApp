@@ -30,7 +30,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_user"
+            android:imeActionId="@+id/user"
             android:imeOptions="actionNext"
+            android:inputType="text"
             android:maxLines="1" />
 
     </android.support.design.widget.TextInputLayout>
@@ -47,7 +49,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Default displayed name"
+            android:imeActionId="@+id/name"
             android:imeOptions="actionNext"
+            android:inputType="text"
             android:maxLines="1" />
     </android.support.design.widget.TextInputLayout>
 
@@ -79,6 +83,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/confirm_password"
             android:imeActionId="@+id/confirm_password"
+            android:imeOptions="actionNext"
             android:imeActionLabel="@string/action_sign_in_short"
             android:inputType="textPassword"
             android:maxLines="1" />
