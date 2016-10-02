@@ -22,6 +22,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.support.design.widget.TextInputEditText;
 
+import pingproject.pingapp.UserController;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -150,7 +152,7 @@ public class SignUpActivity extends AppCompatActivity{
     private void writeToFile(String data,Context context) {
         try {
             String dir = getFilesDir().getAbsolutePath();
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(dir+"/config.txt", Context.MODE_PRIVATE));
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
             Log.e("Print",dir);
             outputStreamWriter.close();
@@ -192,29 +194,22 @@ public class SignUpActivity extends AppCompatActivity{
 
         private final String mUser;
         private final String mPassword;
+        private final String mName;
 
         UserLoginTask(String user, String password) {
             mUser = user;
             mPassword = password;
+            mName = mNameView.getText().toString();
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mUser)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
+            if (UserController.createNewUser(mUser, mPassword, mName) == false) {
+                // Account exists, return true if the password matches.
+                return false;
             }
 
             // TODO: register the new account here.

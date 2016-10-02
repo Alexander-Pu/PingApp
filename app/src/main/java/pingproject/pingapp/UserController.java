@@ -19,6 +19,7 @@ import pingproject.pingapp.CoreClasses.*;
 
 public class UserController extends android.app.Application{
 
+
     @Override public void onCreate()
     {
         super.onCreate();
@@ -27,7 +28,7 @@ public class UserController extends android.app.Application{
 
     /////////////////////////////////////Post Methods///////////////////////////////////////////
 
-    public boolean CreateNewUser(final String username, final String password, final String fullname) {
+    public static boolean createNewUser(final String username, final String password, final String fullname) {
 
         final Firebase myFirebaseRef = new Firebase("https://pingapp-c427f.firebaseio.com/");
 
@@ -81,7 +82,7 @@ public class UserController extends android.app.Application{
         return !(exist[0]);
     }
 
-    public boolean addFriend (final String selfUsername, final String selfId, final String friendUsername){
+    public static boolean addFriend (final String selfUsername, final String selfId, final String friendUsername){
 
         final Firebase myFirebaseRef = new Firebase("https://pingapp-c427f.firebaseio.com/");
         final boolean[] returnStatement = {false};
@@ -161,7 +162,7 @@ public class UserController extends android.app.Application{
         return returnStatement[0];
     }
 
-    public void acceptFriend(final String selfUsername, final String selfId, final String friendUsername) {
+    public static void acceptFriend(final String selfUsername, final String selfId, final String friendUsername) {
         final Firebase myFirebaseRef = new Firebase("https://pingapp-c427f.firebaseio.com/");
         final boolean[] returnStatement = {false};
 
@@ -223,7 +224,7 @@ public class UserController extends android.app.Application{
 
     /////////////////////////////////Get Methods//////////////////////////////////////
 
-    public User getUserInformation(final String username) {
+    public static User getUserInformation(final String username) {
         final Firebase myFirebaseRef = new Firebase("https://pingapp-c427f.firebaseio.com/");
 
         final User self = new User();
