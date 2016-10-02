@@ -8,7 +8,7 @@ import java.util.List;
  */
 
 public class User {
-    private int UserId;
+    private String UserId;
     private String Username;
     private String Password;
     private String Fullname;
@@ -16,11 +16,13 @@ public class User {
     private List<Group> GroupList;
     private List<History> PingHistory;
     private List<User> FriendsList;
+    private List<User> PendingFriends;
 
     public User() {
         GroupList = new ArrayList<Group>();
         PingHistory = new ArrayList<History>();
         FriendsList = new ArrayList<User>();
+        PendingFriends = new ArrayList<User>();
     }
 
     /////////////////////////////Setter Methods////////////////////////////
@@ -37,7 +39,7 @@ public class User {
         return true;
     }
 
-    public boolean setUserId (int userId) {
+    public boolean setUserId (String userId) {
         UserId = userId;
         return true;
     }
@@ -50,13 +52,17 @@ public class User {
         FriendsList.add(friend);
     }
 
+    public void addPendingFriend(User friend) {
+        PendingFriends.add(friend);
+    }
+
     ///////////////////////////Getter Methods////////////////////////////
 
     public String getUser() {
         return Username;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return UserId;
     }
 
@@ -87,5 +93,9 @@ public class User {
 
     public List<User> getFriendsList() {
         return FriendsList;
+    }
+
+    public List<User> getPendingFriends() {
+        return PendingFriends;
     }
 }
