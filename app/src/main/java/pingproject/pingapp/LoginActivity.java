@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity{
     private TextInputEditText mPasswordView;
 
     private String getStringFromFile(String filename) {
-        String returnString = "test1:hello";
+        String returnString = "invalid@:hello";
         Log.d("Default string",returnString);
         try{
             Log.d("Trying","To work");
