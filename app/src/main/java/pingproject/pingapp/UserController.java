@@ -101,6 +101,9 @@ public class UserController extends android.app.Application{
                 self.setFullname(refSelf.getFullname());
                 self.setUsername(refSelf.getUser());
                 self.setUserId(selfId);
+                HashMap<String, Integer> selfPair = new HashMap<String, Integer>();
+                selfPair.put(friendUsername, 0);
+                refSelf.getFriendsList().add(selfPair);
             }
 
             @Override
@@ -129,8 +132,10 @@ public class UserController extends android.app.Application{
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 //snapshot is at "UserObj"
                                 User pendingUser = (User) dataSnapshot.getValue();
-                                List<User> pendingList = (List<User>) pendingUser.getPendingFriends();
-                                pendingList.add(self);
+                                List<HashMap<String, Integer>> friendsList = (List<HashMap<String, Integer>>) pendingUser.getFriendsList();
+                                HashMap<String, Integer> selfPair = new HashMap<String, Integer>();
+                                selfPair.put(selfUsername, 1);
+                                friendsList.add(selfPair);
                                 friendRef.setValue(pendingUser);
                                 returnStatement[0] = true;
                             }
@@ -156,7 +161,99 @@ public class UserController extends android.app.Application{
         return returnStatement[0];
     }
 
-    public acceptFriend(final String selfUsername, final String selfId, final String friendUsername) {
+    public void acceptFriend(final String selfUsername, final String selfId, final String friendUsername) {
+        final Firebase myFirebaseRef = new Firebase("https://pingapp-c427f.firebaseio.com/");
+        final boolean[] returnStatement = {false};
 
+        final Firebase userRef = myFirebaseRef.child("User");
+
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //snapshot at users
+                for (DataSnapshot snapChild : dataSnapshot.getChildren()) {
+                    if (snapChild.getValue() == selfId) {
+                        User selfUser = (User) snapChild.child("UserObj").getValue();
+                        List<HashMap<String, Integer>> pendingSelfFriends = selfUser.getFriendsList();
+                        for (int i = 0; i < pendingSelfFriends.size(); i++) {
+                            for (String key : pendingSelfFriends.get(i).keySet()) {
+                                if (key == friendUsername) {
+                                    pendingSelfFriends.get(i).remove(key);
+                                    pendingSelfFriends.get(i).put(friendUsername, 2);
+                                }
+                            }
+                        }
+                    }
+                }
+                //Get a reference to the friend
+                for(DataSnapshot childSnap: dataSnapshot.getChildren()) {
+                    //snapshot is at "Id"
+                    if (childSnap.child("Username").getValue() == friendUsername) {
+                        String uniqueId = childSnap.getKey();
+
+                        final Firebase friendRef = userRef.child(uniqueId).child("UserObj");
+                        friendRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                //snapshot in UserObj
+                                User friend = (User) dataSnapshot.getValue();
+                                List<HashMap<String, Integer>> friendsList = (List<HashMap<String, Integer>>) friend.getFriendsList();
+                                HashMap<String, Integer> selfPair = new HashMap<String, Integer>();
+                                selfPair.put(selfUsername, 2);
+                                friendsList.add(selfPair);
+                                friendRef.setValue(friend);
+                            }
+
+                            @Override
+                            public void onCancelled(FirebaseError firebaseError) {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+    }//method bracket
+
+    /////////////////////////////////Get Methods//////////////////////////////////////
+
+    public User getUserInformation(final String username) {
+        final Firebase myFirebaseRef = new Firebase("https://pingapp-c427f.firebaseio.com/");
+
+        final User self = new User();
+
+        final Firebase userRef = myFirebaseRef.child("Users");
+
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for(DataSnapshot childSnap: dataSnapshot.getChildren()) {
+                    if (childSnap.child("Username").getValue() == username) {
+                        String uniqueId = childSnap.getKey();
+                        User temp = (User)childSnap.child("UserObj").getValue();
+
+                        self.setUsername(temp.getUser());
+                        self.setFullname(temp.getFullname());
+                        self.setFriendsList(temp.getFriendsList());
+                        self.setGroupList(temp.getGroupList());
+                        self.setPingHistory(temp.getPingHistory());
+                        self.setLocation(temp.getLocation().getLat(), temp.getLocation().getLong());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+        return self;
     }
 }

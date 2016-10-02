@@ -2,6 +2,7 @@ package pingproject.pingapp.CoreClasses;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 /**
  * Created by SuperEEJ on 10/1/2016.
@@ -15,14 +16,12 @@ public class User {
     private Location CurrentLoc;
     private List<Group> GroupList;
     private List<History> PingHistory;
-    private List<User> FriendsList;
-    private List<User> PendingFriends;
+    private List<HashMap<String, Integer>> FriendsList;
 
     public User() {
         GroupList = new ArrayList<Group>();
         PingHistory = new ArrayList<History>();
-        FriendsList = new ArrayList<User>();
-        PendingFriends = new ArrayList<User>();
+        FriendsList = new ArrayList<HashMap<String, Integer>>();
     }
 
     /////////////////////////////Setter Methods////////////////////////////
@@ -48,12 +47,26 @@ public class User {
         Fullname = name;
     }
 
-    public void addFriend(User friend) {
-        FriendsList.add(friend);
+    public void setGroupList(List<Group> updatedGroupList) {
+        GroupList = updatedGroupList;
     }
 
-    public void addPendingFriend(User friend) {
-        PendingFriends.add(friend);
+    public void setPingHistory(List<History> updatedPingHistory) {
+        PingHistory = updatedPingHistory;
+    }
+
+    public void setFriendsList(List<HashMap<String, Integer>> updatedFriends) {
+        FriendsList = updatedFriends;
+    }
+
+    public void addFriend(String friendName, int status) {
+        HashMap<String, Integer> friendPair = new HashMap<String, Integer>();
+        friendPair.put(friendName, status);
+        FriendsList.add(friendPair);
+    }
+
+    public void setLocation(double latitude, double longitude) {
+        CurrentLoc = new Location(latitude, longitude);
     }
 
     ///////////////////////////Getter Methods////////////////////////////
@@ -83,7 +96,7 @@ public class User {
         return CurrentLoc;
     }
 
-    public List<Group> getGroupMembers() {
+    public List<Group> getGroupList() {
         return GroupList;
     }
 
@@ -91,11 +104,8 @@ public class User {
         return PingHistory;
     }
 
-    public List<User> getFriendsList() {
+    public List<HashMap<String, Integer>> getFriendsList() {
         return FriendsList;
     }
 
-    public List<User> getPendingFriends() {
-        return PendingFriends;
-    }
 }
