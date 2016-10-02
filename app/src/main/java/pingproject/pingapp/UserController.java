@@ -20,6 +20,8 @@ import pingproject.pingapp.CoreClasses.*;
 
 public class UserController extends android.app.Application{
 
+    static boolean nameExists = false;
+
 
     @Override public void onCreate()
     {
@@ -32,41 +34,38 @@ public class UserController extends android.app.Application{
     public static boolean createNewUser(final String username, final String password, final String fullname) {
 
         final Firebase myFirebaseRef = new Firebase("https://pingapp-c427f.firebaseio.com/");
-
-        final boolean[] exist = {false};
+        boolean temp;
 
         //check if the user is already in the databse
         final Firebase userRef = myFirebaseRef.child("User");
 
-        userRef.addValueEventListener((new ValueEventListener() {
+        userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getChildren() != null) {
                     for (DataSnapshot snapChild : dataSnapshot.getChildren()) {
 
-                        //snapChild is at "Id"
-                        if (snapChild.child("Username").getValue() == username) {
-                            exist[0] = true;
+                        if (username.equalsIgnoreCase((String)snapChild.child("Username").getValue())) {
+                            Log.e("Truerrr", "THey're equal");
+                            nameExists = true;
                         }
                     }
                     Log.e("LoopCheck", "ExitsLoop");
                 }
-                int count = 0;
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
             }
 
-        }));
-
-        if (exist[0] == false) {
+        });
+        temp = nameExists;
+        Log.e("VALUEEEEEEEEEEE", Boolean.toString(nameExists));
+        if (temp == false) {
 
             User newUserObj = new User();
-            Log.e("Passwordcheck", password);
-
-            newUserObj.setUsername(username);
-            newUserObj.setPassword(password);
-            newUserObj.setFullname(fullname);
+            newUserObj.Username = username;
+            newUserObj.Password = password;
+            newUserObj.Fullname = fullname;
 
             Map<Object, Object> newUserMap = new HashMap<Object, Object>();
             newUserMap.put("UserObj", newUserObj);
@@ -74,7 +73,8 @@ public class UserController extends android.app.Application{
             userRef.push().setValue(newUserMap);
         }
 
-        return !(exist[0]);
+        nameExists = false;
+        return !(temp);
     }
 
     public static boolean addFriend (final String selfUsername, final String selfId, final String friendUsername){

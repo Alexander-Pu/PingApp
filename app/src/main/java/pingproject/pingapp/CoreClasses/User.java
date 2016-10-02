@@ -10,9 +10,9 @@ import java.util.HashMap;
 
 public class User {
     private String UserId;
-    private String Username;
-    private String Password;
-    private String Fullname;
+    public String Username;
+    public String Password;
+    public String Fullname;
     private Location CurrentLoc;
     private List<Group> GroupList;
     private List<History> PingHistory;
